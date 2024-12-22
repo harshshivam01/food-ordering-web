@@ -61,42 +61,41 @@ const RestaurantMenu = () => {
     };
    const handleAddToCart = async(item) => {
     try {
-        const userId=authService.getUserId();
+        const userId = authService.getUserId();
+        if (!userId) {
+            notifyError("Please login to add items to cart");
+            return;
+        }
+
         // Get current cart items first
         const cartResponse = await cartService.getCartItems(userId);
-        console.log("resp",cartResponse);
+        
         if (cartResponse && cartResponse.length > 0 && cartResponse[0].items.length > 0) {
             const productId = cartResponse[0].items[0].products;
-            const productres=await menuService.getItemById(productId);
-            if(productres){
-                console.log(productres)
-            const currentRestaurantId=productres.resId;
+            const productres = await menuService.getItemById(productId);
             
-            console.log(currentRestaurantId,restaurantId);
-            if (currentRestaurantId !== restaurantId) {
-                // Show confirmation dialog
-                if (window.confirm('Your cart has items from another restaurant. Would you like to clear your cart and add this item?')) {
-                    await cartService.clearCart();
-                    await cartService.addToCart(item._id);
-                    notifySuccess(`Cart cleared and ${item.name} added to cart`);
-                    updateCartDetails();
+            if (productres) {
+                const currentRestaurantId = productres.resId;
+                
+                if (currentRestaurantId !== restaurantId) {
+                    if (window.confirm('Your cart has items from another restaurant. Would you like to clear your cart and add this item?')) {
+                        await cartService.clearCart();
+                        await cartService.addToCart(item._id, 1);
+                        notifySuccess(`Cart cleared and ${item.name} added to cart`);
+                        updateCartDetails();
+                    }
                 } else {
-                    return; // User chose not to clear cart
+                    await cartService.addToCart(item._id, 1);
+                    notifySuccess(`${item.name} added to cart`);
+                    updateCartDetails();
                 }
-            } else {
-                // Same restaurant, proceed normally
-                await cartService.addToCart(item._id);
-                notifySuccess(`${item.name} added to cart`);
-                updateCartDetails();
             }
         } else {
-            // Empty cart, proceed normally
-            await cartService.addToCart(item._id);
+            await cartService.addToCart(item._id, 1);
             notifySuccess(`${item.name} added to cart`);
             updateCartDetails();
         }
-    }
-} catch (error) {
+    } catch (error) {
         notifyError("Failed to add item to cart");
         console.error("Error adding item to cart:", error);
     }
