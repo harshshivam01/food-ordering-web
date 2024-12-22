@@ -27,15 +27,15 @@ const LoginPage = () => {
     if (!formData.username.trim()) {
       newErrors.username = "Username is required";
       isValid = false;
-    } else if (formData.username.length < 3) {
-      newErrors.username = "Username must be at least 3 characters";
+    } else if (formData.username.length < 2) {
+      newErrors.username = "Username must be at least 2 characters";
       isValid = false;
     }
 
     if (!formData.password) {
       newErrors.password = "Password is required";
       isValid = false;
-    } else if (formData.password.length < 6) {
+    } else if (formData.password.length < 2) {
       newErrors.password = "Password must be at least 6 characters";
       isValid = false;
     }
