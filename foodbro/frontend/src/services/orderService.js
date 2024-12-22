@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const AXIOS_BASE_URL = 'http://localhost:3020/api/orders';
+const AXIOS_BASE_URL = 'https://food-ordering-web-f49f.onrender.com/api/orders';
 
 const axiosInstance = axios.create({
   baseURL: AXIOS_BASE_URL,

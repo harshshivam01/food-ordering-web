@@ -1,6 +1,6 @@
 import axios from "axios";
 import { authService } from "./authuser";
-const AXIOS_BASE_URL = "http://localhost:3020/api/menu";
+const AXIOS_BASE_URL = "https://food-ordering-web-f49f.onrender.com/api/menu";
 
 const axiosInstance = axios.create({
   baseURL: AXIOS_BASE_URL,
