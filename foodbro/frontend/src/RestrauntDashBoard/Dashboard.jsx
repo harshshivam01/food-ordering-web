@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import { orderService } from '../services/orderService';
 import { menuService } from '../services/authproduct';
-import { authService } from '../services/authUser';
+import { authService } from '../services/authuser';
 
 const RestaurantDashboard = () => {
   const [orders, setOrders] = useState([]);
