@@ -26,10 +26,6 @@ const getCart = async (req, res) => {
  * Add an item to the cart
  */
 const addToCart = async (req, res) => {
-  console.log(req.body);
-  console.log(req.user);
-  console.log(req.user.id);
-
   const { productId, quantity } = req.body;
 
   if (!productId || !quantity || isNaN(quantity) || quantity <= 0) {
@@ -38,38 +34,49 @@ const addToCart = async (req, res) => {
 
   try {
     const userId = req.user.id;
-
-    // Find the cart for the user
-    let cart = await Cart.findOne({ user: userId });
-
-    if (!cart) {
-      // If cart doesn't exist, create a new one
-      cart = new Cart({ user: userId, items: [], totalPrice: 0 });
+    
+    // Find the menu item first to get its price
+    const menuItem = await Menu.findById(productId);
+    if (!menuItem) {
+      return res.status(404).json({ error: "Product not found" });
     }
 
-    // Check if the item already exists in the cart
-    const existingItem = cart.items.find(
-      (item) => item.products.toString() === productId
+    // Use findOneAndUpdate instead of find and save
+    const cart = await Cart.findOneAndUpdate(
+      { user: userId },
+      {
+        $setOnInsert: { user: userId, totalPrice: 0 }
+      },
+      { upsert: true, new: true }
     );
 
-    let itemPrice = await calculatePrice(productId, quantity);
+    // Find if item exists in cart
+    const existingItemIndex = cart.items.findIndex(
+      item => item.products.toString() === productId
+    );
 
-    if (existingItem) {
-      // Update quantity and price for the existing item
-      existingItem.quantity += Number(quantity);
-      const newPrice = await calculatePrice(productId, existingItem.quantity);
-      cart.totalPrice += newPrice - (existingItem.quantity - quantity) * itemPrice;
+    if (existingItemIndex > -1) {
+      // Update existing item
+      cart.items[existingItemIndex].quantity += Number(quantity);
     } else {
-      // If it's a new item, add it to the cart
-      cart.items.push({  products: productId, quantity });
-      cart.totalPrice += itemPrice;
+      // Add new item
+      cart.items.push({ products: productId, quantity: Number(quantity) });
     }
 
-    // Save the updated cart
-    await cart.save();
-    res.status(200).json(cart);
+    // Recalculate total price
+    cart.totalPrice = await Promise.all(
+      cart.items.map(async (item) => {
+        const menuItem = await Menu.findById(item.products);
+        return menuItem.price * item.quantity;
+      })
+    ).then(prices => prices.reduce((sum, price) => sum + price, 0));
+
+    // Save with options
+    const updatedCart = await cart.save({ new: true });
+    res.status(200).json(updatedCart);
+
   } catch (error) {
-    console.error("Error in addToCart:", error.message);
+    console.error("Error in addToCart:", error);
     res.status(500).json({ error: error.message });
   }
 };

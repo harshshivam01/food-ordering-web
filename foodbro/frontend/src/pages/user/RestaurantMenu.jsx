@@ -55,8 +55,9 @@ const RestaurantMenu = () => {
     };
    const handleAddToCart = async(item) => {
     try {
+        const userId=authService.getUserId();
         // Get current cart items first
-        const cartResponse = await cartService.getCartItems();
+        const cartResponse = await cartService.getCartItems(userId);
         if (cartResponse && cartResponse.length > 0 && cartResponse[0].items.length > 0) {
             const currentRestaurantId = cartResponse[0].items[0].products.resId;
             
@@ -74,13 +75,13 @@ const RestaurantMenu = () => {
                 // Same restaurant, proceed normally
                 await cartService.addToCart(item._id);
                 notifySuccess(`${item.name} added to cart`);
-                updateCartLength();
+                updateCartDetails();
             }
         } else {
             // Empty cart, proceed normally
             await cartService.addToCart(item._id);
             notifySuccess(`${item.name} added to cart`);
-            updateCartLength();
+            updateCartDetails();
         }
     } catch (error) {
         notifyError("Failed to add item to cart");
