@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const Cart = require("../models/cartmodel"); // Fixed casing to match actual filename
-const Menu = require("../models/menu"); 
+const Cart = require("../models/cartmodel"); // Fixed casing
+const Menu = require("../models/menu");
 
 
 

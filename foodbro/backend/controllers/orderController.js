@@ -1,5 +1,5 @@
 const Order = require('../models/orderModel');
-const Cart = require('../models/cartModel');
+const Cart = require('../models/cartmodel');
 const Menu = require('../models/menu');
 
 const createOrder = async (req, res) => {
