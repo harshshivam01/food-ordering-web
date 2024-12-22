@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 
 const Checkout = () => {
   const navigate = useNavigate();
-  const { updateCartLength } = useCart();
+  const { updateCartDetails } = useCart();
   const [loading, setLoading] = useState(false);
   const [address, setAddress] = useState({
     street: '',
@@ -30,7 +30,7 @@ const Checkout = () => {
     try {
       const deliveryAddress = `${address.street}, ${address.city}, ${address.state} - ${address.zipCode}`;
       await orderService.createOrder({ deliveryAddress });
-      updateCartLength();
+      updateCartDetails();
       toast.success('Order placed successfully!');
       navigate('/orders');
     } catch (error) {
