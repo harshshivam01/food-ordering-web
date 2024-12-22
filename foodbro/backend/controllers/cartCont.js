@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Cart = require("../models/cartModel"); // Adjust the path based on your project structu
+const Cart = require("../models/cartmodel"); // Fixed casing to match actual filename
 const Menu = require("../models/menu"); 
 
 
