@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import adminDashboard from "../assets/adminDashboard.png"
 
 const FeatureCard = ({ icon: Icon, title, description }) => (
   <motion.div 
@@ -152,7 +153,7 @@ const FoodBroLandingPage = () => {
             transition={{ duration: 0.6 }}
           >
             <img 
-              src="/api/placeholder/600/400" 
+              src={adminDashboard} 
               alt="FoodBro Dashboard" 
               className="rounded-xl shadow-xl"
             />

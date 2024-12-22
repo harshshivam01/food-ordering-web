@@ -60,9 +60,9 @@ const Navbar = () => {
           </Link>
         )}
 
-        <div className=" md:flex space-x-6 items-center">
+        <div className="md:flex space-x-6 items-center">
           {authService.isAdmin() && (
-            <>
+            <div className="hidden md:flex space-x-6">
               <Link
                 to="/dashboard/additem"
                 className="text-gray-700 hover:text-purple-600"
@@ -75,7 +75,7 @@ const Navbar = () => {
               >
                 Show Item
               </Link>
-            </>
+            </div>
           )}
 
           <div className="flex space-x-4 items-center">
@@ -125,6 +125,22 @@ const Navbar = () => {
                   
                   {isDropdownOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
+                      {authService.isAdmin() && (
+                        <div className="md:hidden border-b border-gray-100 mb-2">
+                          <Link
+                            to="/dashboard/additem"
+                            className="block px-4 py-2 text-gray-700 hover:bg-purple-50"
+                          >
+                            Add Item
+                          </Link>
+                          <Link
+                            to="/dashboard/allitems"
+                            className="block px-4 py-2 text-gray-700 hover:bg-purple-50"
+                          >
+                            Show Item
+                          </Link>
+                        </div>
+                      )}
                       <Link
                         to="/profile"
                         className="block px-4 py-2 text-gray-700 hover:bg-purple-50"

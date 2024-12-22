@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Mail, Lock, AlertCircle } from "lucide-react";
 import { authService } from "../services/authuser";
 import { useNavigate } from "react-router-dom";
+import  loginreq from "../assets/loginreq.png"
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -102,11 +103,11 @@ const LoginPage = () => {
       <div className="container mx-auto px-4 py-12">
         <div className="grid md:grid-cols-2 gap-8 items-center">
           {/* Illustration Side */}
-          <div className="hidden md:block">
+          <div className="hidden md:block ">
             <img
-              src="/api/placeholder/500/400"
+              src={loginreq}
               alt="Login Illustration"
-              className="w-full rounded-lg shadow-xl transform hover:scale-105 transition-transform duration-300"
+              className="w-6/12 h-[80vh] mx-auto rounded-lg shadow-xl transform hover:scale-105 transition-transform duration-300"
             />
           </div>
 
