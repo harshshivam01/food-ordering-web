@@ -32,7 +32,7 @@ const Home = () => {
                         <Link
                             to={`/restaurant/${restaurant.id || restaurant._id}`}
                             key={restaurant.id || restaurant._id}
-                            className="group bg-purple-300 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden transform hover:-translate-y-1"
+                            className="group bg-purple-100 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden transform hover:-translate-y-1"
                         >
                             <div className="relative">
                                 <img

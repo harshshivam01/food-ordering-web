@@ -13,7 +13,7 @@ const RestaurantMenu = () => {
     const [error, setError] = useState(null);
     const [restaurant, setRestaurant] = useState(null);
     const { restaurantId } = useParams();
-    const {updateCartLength}=useCart();
+    const {updateCartDetails}=useCart();
 
     const notifySuccess = (message) =>
         toast.success(message, {
@@ -53,18 +53,40 @@ const RestaurantMenu = () => {
             setLoading(false);
         }
     };
-    const handleAddToCart = async(item) => {
-        try {
+   const handleAddToCart = async(item) => {
+    try {
+        // Get current cart items first
+        const cartResponse = await cartService.getCartItems();
+        if (cartResponse && cartResponse.length > 0 && cartResponse[0].items.length > 0) {
+            const currentRestaurantId = cartResponse[0].items[0].products.resId;
+            
+            if (currentRestaurantId !== restaurantId) {
+                // Show confirmation dialog
+                if (window.confirm('Your cart has items from another restaurant. Would you like to clear your cart and add this item?')) {
+                    await cartService.clearCart();
+                    await cartService.addToCart(item._id);
+                    notifySuccess(`Cart cleared and ${item.name} added to cart`);
+                    updateCartDetails();
+                } else {
+                    return; // User chose not to clear cart
+                }
+            } else {
+                // Same restaurant, proceed normally
+                await cartService.addToCart(item._id);
+                notifySuccess(`${item.name} added to cart`);
+                updateCartLength();
+            }
+        } else {
+            // Empty cart, proceed normally
             await cartService.addToCart(item._id);
-            notifySuccess(`${item.name} added to cart`)
+            notifySuccess(`${item.name} added to cart`);
             updateCartLength();
-            console.log("Item added to cart successfully");
-        } catch (error) {
-            notifyError("Failed to add item to cart")
-            console.error("Error adding item to cart:", error);
         }
-
+    } catch (error) {
+        notifyError("Failed to add item to cart");
+        console.error("Error adding item to cart:", error);
     }
+};
 
     if (loading) return <div className="text-center py-10">Loading...</div>;
     if (error) return <div className="text-center py-10 text-red-500">{error}</div>;
@@ -87,11 +109,11 @@ const RestaurantMenu = () => {
                         key={item._id}
                         className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 flex flex-row-reverse overflow-hidden"
                     >
-                        <div className="relative w-1/3 flex-shrink-0">
+                        <div className="relative w-1/4 flex-shrink-0">
                             <img
                                 src={item.image || "https://via.placeholder.com/200x150"}
                                 alt={item.name}
-                                className="w-full h-full object-cover"
+                                className="w-full h-44 object-cover"
                             />
                             <span className={`absolute top-2 left-2 px-2 py-0.5 rounded-full text-xs ${
                                 item.isveg ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'

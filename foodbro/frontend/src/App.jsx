@@ -32,16 +32,26 @@ const Layout = () => {
 // New component to handle root route redirection
 const RootRedirect = () => {
   const isLoggedIn = authService.isLoggedIn();
-  return isLoggedIn ? <Navigate to="/home" replace /> : <FoodBroLandingPage />;
+  const isAdmin = authService.isAdmin();
+
+  if (isLoggedIn) {
+    return isAdmin ? (
+      <Navigate to="/dashboard" replace />
+    ) : (
+      <Navigate to="/home" replace />
+    );
+  }
+
+  return <FoodBroLandingPage />;
 };
 
 // New component to handle order history redirection
 const OrderHistoryRedirect = () => {
   const user = authService.getUser();
   if (!user) return <Navigate to="/login" />;
-  
-  return user.role === "admin" ? 
-    <Navigate to="/dashboard/orders" /> : 
+
+  return user.role === "admin" ?
+    <Navigate to="/dashboard/orders" /> :
     <Navigate to="/orders" />;
 };
 
@@ -57,11 +67,11 @@ const App = () => {
         },
         {
           path: "/signup",
-          element: !authService.isLoggedIn() ? <SignupPage /> : <Navigate to="/home" replace />,
+          element: <SignupPage />,
         },
         {
           path: "/login",
-          element: !authService.isLoggedIn() ? <LoginPage /> : <Navigate to="/home" replace />,
+          element: <LoginPage />,
         },
         {
           path: "/home",

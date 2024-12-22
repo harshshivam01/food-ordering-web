@@ -3,7 +3,7 @@ import { cartService } from "../services/cartService";
 import { authService } from "../services/authuser";
 import { menuService } from "../services/authproduct";
 import { Plus, Minus, Trash2 } from "lucide-react";
-import { useCart } from "../context/cartContext";
+import  {useCart } from "../context/cartContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from 'react-router-dom';
@@ -14,8 +14,10 @@ const CartView = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const { updateCartLength } = useCart();
+  const { updateCartDetails} = useCart();
+  const {  cartTotal } = useCart();
   const navigate = useNavigate();
+
 
   const userId = authService.getUserId();
 
@@ -34,7 +36,7 @@ const CartView = () => {
     try {
       setLoading(true);
       await cartService.removeFromCart(productId);
-      updateCartLength();
+      updateCartDetails();
       setRefreshTrigger((prev) => prev + 1);
       notifySuccess(itemName+" removed from cart!");
     } catch (error) {
@@ -49,7 +51,7 @@ const CartView = () => {
   const handleClearCart = async () => {
     try {
       await cartService.clearCart();
-      updateCartLength();
+      updateCartDetails();
       setCartItems([]);
       setCart({});
       notifySuccess("Cart cleared!");
@@ -135,7 +137,7 @@ const CartView = () => {
                 <span className="font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">
                   Subtotal:
                 </span>{" "}
-                <span className="font-semibold">₹ {cart.totalPrice}</span>
+                <span className="font-semibold">₹ {cartTotal}</span>
               </div>
               <button 
                 onClick={() => navigate('/checkout')}
@@ -156,7 +158,7 @@ const CartItemCard = ({ items, onRemove }) => {
   const [quantity, setQuantity] = useState(items?.quantity || 1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { updateCartLength } = useCart();
+  const { updateCartDetails } = useCart();
 
   useEffect(() => {
     if (items?.products) {
@@ -184,7 +186,7 @@ const CartItemCard = ({ items, onRemove }) => {
   const handleQuantityChange = async (newQuantity) => {
     try {
       await cartService.updateCartItemQuantity(items.products, newQuantity);
-      updateCartLength();
+      updateCartDetails();
       setQuantity(newQuantity);
     } catch (error) {
       setError(error.message);

@@ -115,11 +115,29 @@ const totalItem = async () => {
   }
 };
 
+const getCartTotal = async () => {
+  try {
+    const userId = await authService.getUserId();
+    if (!userId) {
+      return 0;
+    }
+    const cart = await getCartItems(userId);
+    if (Array.isArray(cart) && cart.length > 0) {
+      return cart[0]?.totalPrice || 0;
+    }
+    return 0;
+  } catch (error) {
+    console.error("Error getting cart total:", error);
+    return 0;
+  }
+};
+
 export const cartService = {
     addToCart,
     getCartItems,
     removeFromCart,
     clearCart,
     updateCartItemQuantity,
-    totalItem
+    totalItem,
+    getCartTotal
 }

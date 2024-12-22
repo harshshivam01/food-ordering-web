@@ -113,7 +113,12 @@ const SignupPage = () => {
     authService.register(submitData)
       .then((res) => {
         console.log("Registration Successful:", res);
-        navigate("/login", { replace: true });
+        if(selectedRole==='admin'){
+          navigate("/dashboard",{replace:true})
+        }
+        else{
+        navigate("/home", { replace: true });
+        }
       })
       .catch((err) => {
         console.error("Registration Error:", err);
