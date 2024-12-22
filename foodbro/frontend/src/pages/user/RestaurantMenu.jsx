@@ -28,10 +28,16 @@ const RestaurantMenu = () => {
     useEffect(() => {
         const fetchRestaurantDetails = async () => {
             try {
-                const response = await authService.getRestaurantById(restaurantId);
-                setRestaurant(response.restaurant);
+                const response = await authService.getAllRestaurants();
+                const restaurantData = response.restaurants.find(r => r._id === restaurantId);
+                if (restaurantData) {
+                    setRestaurant(restaurantData);
+                } else {
+                    throw new Error('Restaurant not found');
+                }
             } catch (error) {
                 console.error("Error fetching restaurant details:", error);
+                setError("Failed to load restaurant details");
             }
         };
 
@@ -58,9 +64,15 @@ const RestaurantMenu = () => {
         const userId=authService.getUserId();
         // Get current cart items first
         const cartResponse = await cartService.getCartItems(userId);
+        console.log("resp",cartResponse);
         if (cartResponse && cartResponse.length > 0 && cartResponse[0].items.length > 0) {
-            const currentRestaurantId = cartResponse[0].items[0].products.resId;
+            const productId = cartResponse[0].items[0].products;
+            const productres=await menuService.getItemById(productId);
+            if(productres){
+                console.log(productres)
+            const currentRestaurantId=productres.resId;
             
+            console.log(currentRestaurantId,restaurantId);
             if (currentRestaurantId !== restaurantId) {
                 // Show confirmation dialog
                 if (window.confirm('Your cart has items from another restaurant. Would you like to clear your cart and add this item?')) {
@@ -83,7 +95,8 @@ const RestaurantMenu = () => {
             notifySuccess(`${item.name} added to cart`);
             updateCartDetails();
         }
-    } catch (error) {
+    }
+} catch (error) {
         notifyError("Failed to add item to cart");
         console.error("Error adding item to cart:", error);
     }
